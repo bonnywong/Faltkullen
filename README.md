@@ -8,5 +8,5 @@ Importering sker enklast med hjälp av antingen Eclipse eller IntelliJ.
 2. IntelliJ: File -> Import Project, nagivera till projektfoldern, välj "build.gradle" och tryck "Ok". 
 
 ###Bibliotek
-[LibGDX](https://github.com/libGDX/libGDX) är grafikmotorn som används för Fältkullen. Förrutom Windows stöds även Mac OS, Android, iOS och webläsare motorn. 
+[LibGDX](https://github.com/libGDX/libGDX) är grafikmotorn som används för Fältkullen. Förrutom Windows stöds även Mac OS, Android, iOS och webbläsare med stöd för WebGL. 
 LibGDX är under [Apache 2](http://www.apache.org/licenses/LICENSE-2.0.html) vilket innebär fri användning för både privata och kommersiella syften. 
