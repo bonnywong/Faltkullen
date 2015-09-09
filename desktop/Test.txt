@@ -1,0 +1,57 @@
+NEWARMY
+T:Soldier/0/BASE_Settings
+NEW_Attribute:Weapon Damage:1:75:115:100:true
+NEW_Attribute:Weapon Accuracy:90:95:100:100:false
+NEW_Attribute:Weapon Range:10:60:100:80:true
+NEW_Attribute:Protection:5:10:15:100:false
+NEW_Attribute:Sensor Range:5:100:300:225:true
+NEW_Attribute:Sensor Interval:1:1:20:-75:false
+NEW_Attribute:Soldier Accuracy:1:2:100:125:false
+NEW_Attribute:Soldier Morale:70:100:100:25:false
+NEW_Attribute:Soldier Movespeed:1:5:10:75:false
+BASE_End
+T:Red Tank/1/BASE_Settings
+NEW_Attribute:Weapon Damage:150:250:350:100:false
+NEW_Attribute:Weapon Range:100:200:300:100:false
+NEW_Attribute:Attack Interval (s):1:5:10:-300:false
+NEW_Attribute:Splash Radius:2:5:10:100:false
+NEW_Attribute:Protection:50:150:250:225:false
+NEW_Attribute:Velocity:25:40:50:75:false
+NEW_Attribute:Fuel per Kilometer:1:4:10:-75:false
+NEW_Attribute:Fuel Capacity:1000:1700:2500:75:false
+NEW_Attribute:Sensor Range:50:100:200:225:false
+NEW_Attribute:Sensor Interval:1:5:10:-75:false
+BASE_End
+Leaders
+1:Red Leader/5/3/3.0/Red Tank/1/1/201.74529/243.04222
+END_LEADERS
+O:0/Red Leader/922.8457/469.79385
+END_ARMY
+NEWARMY
+T:Soldier/0/BASE_Settings
+NEW_Attribute:Weapon Damage:1:75:115:100:false
+NEW_Attribute:Weapon Accuracy:90:95:100:100:false
+NEW_Attribute:Weapon Range:10:60:100:80:false
+NEW_Attribute:Protection:5:10:15:100:false
+NEW_Attribute:Sensor Range:5:100:300:225:false
+NEW_Attribute:Sensor Interval:1:1:20:-75:false
+NEW_Attribute:Soldier Accuracy:1:2:100:125:false
+NEW_Attribute:Soldier Morale:70:100:100:25:false
+NEW_Attribute:Soldier Movespeed:1:5:10:75:false
+BASE_End
+T:Blue Tank/1/BASE_Settings
+NEW_Attribute:Weapon Damage:1:75:115:100:false
+NEW_Attribute:Weapon Range:90:95:100:100:false
+NEW_Attribute:Attack Interval (s):10:60:100:80:false
+NEW_Attribute:Splash Radius:5:10:15:100:false
+NEW_Attribute:Protection:5:100:300:225:false
+NEW_Attribute:Velocity:1:1:20:-75:false
+NEW_Attribute:Fuel per Kilometer:1:2:100:125:false
+NEW_Attribute:Fuel Capacity:70:100:100:25:false
+NEW_Attribute:Sensor Range:1:5:10:75:false
+BASE_End
+Leaders
+1:Blue Leader/5/3/3.0/Blue Soldiers/0/20/739.94556/433.1922
+END_LEADERS
+O:0/Blue Leader/81.39487/202.74323
+END_ARMY
