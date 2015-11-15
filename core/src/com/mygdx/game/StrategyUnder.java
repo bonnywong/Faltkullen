@@ -30,6 +30,8 @@ public class StrategyUnder extends FocusGroup {
     private ScrollPane scrollPane;
     private WidgetGroup scrollHolder;
 
+    private Array canFollow;
+
     public StrategyUnder(Skin sk) {
         super();
         skin = sk;
@@ -38,6 +40,9 @@ public class StrategyUnder extends FocusGroup {
         orderTypes = new Array<Goal>();
         orderTypes.add(new TakePosition(new Position(0, 0), 10));
         orderTypes.add(new RetreatTo(new Position(0, 0), 10));
+
+        canFollow = new Array();
+        canFollow.add("Nothing");
 
         addButton = new TextButton("Create New Order", skin, "button");
         addButton.setPosition(15, 160);
@@ -51,23 +56,27 @@ public class StrategyUnder extends FocusGroup {
         addActor(addButton);
 
         Label l = new Label("Order", skin, "black");
-        l.setPosition(15, 130);
+        l.setPosition(35, 130);
         addActor(l);
 
         l = new Label("Leader", skin, "black");
-        l.setPosition(120, 130);
+        l.setPosition(140, 130);
         addActor(l);
 
         l = new Label("X Coordinate", skin, "black");
-        l.setPosition(225, 130);
+        l.setPosition(245, 130);
         addActor(l);
 
         l = new Label("Y Coordinate", skin, "black");
-        l.setPosition(330, 130);
+        l.setPosition(350, 130);
         addActor(l);
 
         l = new Label("Place on Map", skin, "black");
-        l.setPosition(430, 130);
+        l.setPosition(450, 130);
+        addActor(l);
+
+        l = new Label("Follows Order", skin, "black");
+        l.setPosition(550, 130);
         addActor(l);
 
         list = new WidgetGroup(){
@@ -77,7 +86,7 @@ public class StrategyUnder extends FocusGroup {
             }
         };
         scrollPane = new ScrollPane(list, skin);
-        scrollPane.setSize(550, 130);
+        scrollPane.setSize(650, 130);
         scrollPane.setFadeScrollBars(false);
         scrollHolder = new WidgetGroup();
         scrollHolder.setPosition(0, 0);
@@ -93,16 +102,23 @@ public class StrategyUnder extends FocusGroup {
             sc.remove();
         }
         orders.clear();
+        canFollow.clear();
+        canFollow.add("Nothing");
         listSize = 100;
         list.setHeight(100);
         System.out.println("LOADING ARMY INTO STRATEGY");
         System.out.println("ac.orders.size = " + ac.orders.size);
         for(int a=0;a<ac.orders.size;a++){
             StrategyComponent sc = ac.orders.get(a);
+            canFollow.add(sc);
+        }
+        for(int a=0;a<ac.orders.size;a++){
+            StrategyComponent sc = ac.orders.get(a);
             sc.setPosition(15, 100 + 30 * (a));
             orders.add(sc);
             list.addActor(sc);
-            sc.update();
+            sc.number = a+1;
+            sc.update(canFollow);
         }
         listSize = 100 + ac.orders.size * 30;
         list.setHeight(listSize);
@@ -110,14 +126,19 @@ public class StrategyUnder extends FocusGroup {
 
     public void createNewOrder(){
         //Just create a new TakePosition order and modify the UI to allow the user to modify it
-        StrategyComponent sc = new StrategyComponent(skin, current.leaderList, orderTypes);
+        StrategyComponent sc = new StrategyComponent(skin, current.leaderList, orderTypes, canFollow);
         sc.setPosition(15, 100 + 30 * (orders.size()));
         orders.add(sc);
         list.addActor(sc);
         current.orders.add(sc);
+        sc.number = orders.size();
         listSize+=30;
         list.setHeight(listSize);
         scrollPane.setScrollY(0);
+        canFollow.add(sc);
+        for(int a=0;a<orders.size();a++){
+            orders.get(a).update(canFollow);
+        }
     }
 
     public void drawOrders(SpriteBatch batch){

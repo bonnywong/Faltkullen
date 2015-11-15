@@ -14,6 +14,7 @@ import faltkullen.*;
  * Created by Anton on 2015-08-26.
  */
 public class StrategyComponent extends WidgetGroup {
+    public int number;
     private Leader leader;
     private Goal order;
     private SelectBox orderType;
@@ -22,6 +23,10 @@ public class StrategyComponent extends WidgetGroup {
     private TextField posY;
     private TextButton place;
     private UIOrder onMap;
+    private SelectBox follows;
+    private StrategyComponent following;
+
+    private Label numberLabel;
 
     private boolean placing = false;
 
@@ -29,9 +34,9 @@ public class StrategyComponent extends WidgetGroup {
 
     private final static Texture takePositionTexture = new Texture("arrow.png");
 
-    public StrategyComponent(String str, Skin sk, Array<Leader> leaders, Array<Goal> orderTypes){
+    public StrategyComponent(String str, Skin sk, Array<Leader> leaders, Array<Goal> orderTypes, Array canFollow){
         super();
-        setupComponent(sk, leaders, orderTypes);
+        setupComponent(sk, leaders, orderTypes, canFollow);
 
         //O.0/Number 4/1000/1000
         String[] split = str.split("/");
@@ -47,18 +52,22 @@ public class StrategyComponent extends WidgetGroup {
         onMap.setPosition(Float.parseFloat(split[2]), Float.parseFloat(split[3]));
     }
 
-    public StrategyComponent(Skin sk, Array<Leader> leaders, Array<Goal> orderTypes){
+    public StrategyComponent(Skin sk, Array<Leader> leaders, Array<Goal> orderTypes, Array canFollow){
         super();
-        setupComponent(sk, leaders, orderTypes);
+        setupComponent(sk, leaders, orderTypes, canFollow);
     }
 
-    private void setupComponent(Skin sk, Array<Leader> leaders, Array<Goal> orderTypes){
+    private void setupComponent(Skin sk, Array<Leader> leaders, Array<Goal> orderTypes, Array canFollow){
         skin = sk;
         setSize(800, 25);
 
+        numberLabel = new Label("0", skin, "black");
+        numberLabel.setSize(20, 25);
+        addActor(numberLabel);
+
         orderType = new SelectBox(skin);
         orderType.setSize(100, 25);
-        orderType.setPosition(0, 0);
+        orderType.setPosition(20, 0);
         orderType.setItems(orderTypes);
         orderType.setSelectedIndex(0);
         orderType.addListener(new ChangeListener() {
@@ -71,7 +80,7 @@ public class StrategyComponent extends WidgetGroup {
 
         leaderSelection = new SelectBox<Leader>(skin);
         leaderSelection.setSize(100, 25);
-        leaderSelection.setPosition(105, 0);
+        leaderSelection.setPosition(125, 0);
         leaderSelection.setItems(leaders);
         leaderSelection.setSelectedIndex(0);
         leaderSelection.addListener(new ChangeListener(){
@@ -93,13 +102,13 @@ public class StrategyComponent extends WidgetGroup {
 
         posX = new TextField("1000", skin);
         posX.setSize(100, 25);
-        posX.setPosition(210, 0);
+        posX.setPosition(230, 0);
         posX.setAlignment(1);
         addActor(posX);
 
         posY = new TextField("1000", skin);
         posY.setSize(100, 25);
-        posY.setPosition(315, 0);
+        posY.setPosition(335, 0);
         posY.setAlignment(1);
         addActor(posY);
 
@@ -127,7 +136,7 @@ public class StrategyComponent extends WidgetGroup {
 
         place = new TextButton("Place", skin, "button");
         place.setSize(50, 25);
-        place.setPosition(435, 0);
+        place.setPosition(455, 0);
         place.addListener(new ChangeListener(){
             @Override
             public void changed(ChangeEvent event, Actor actor){
@@ -145,14 +154,58 @@ public class StrategyComponent extends WidgetGroup {
 
         onMap = new UIOrder(new Sprite(takePositionTexture), new Vector3(1000, 1000, 0));
         onMap.setLeader(leaderSelection.getSelected());
+
+        follows = new SelectBox(skin);
+        follows.setSize(100, 25);
+        follows.setPosition(515, 0);
+        if(canFollow != null) {
+            follows.setItems(canFollow);
+            follows.setSelectedIndex(0);
+        }
+        follows.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                if(follows.getSelected() instanceof StrategyComponent){
+                    following = (StrategyComponent)follows.getSelected();
+                }
+                if(onMap == null){
+                    System.out.println("changed : onMap is NULL");
+                }
+                else if(following == null){
+                    System.out.println("changed : following is NULL");
+                }
+                onMap.setOriginOrder(following.getMapMarker());
+            }
+        });
+        addActor(follows);
+
+        /*
+        orderType = new SelectBox(skin);
+        orderType.setSize(100, 25);
+        orderType.setPosition(10, 0);
+        orderType.setItems(orderTypes);
+        orderType.setSelectedIndex(0);
+        orderType.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                //resetOrder();
+            }
+        });
+        addActor(orderType);
+        */
     }
 
     public void drawOrder(SpriteBatch batch){
         onMap.draw(batch);
     }
 
-    public void update(){
+    public void update(Array canFollow){
+        numberLabel.setText(""+number);
         onMap.setLeader(leaderSelection.getSelected());
+        follows.setItems(canFollow);
+        if(following != null){
+            follows.setSelected(following);
+        }
     }
 
     public void mapClick(float x, float y){
@@ -165,7 +218,7 @@ public class StrategyComponent extends WidgetGroup {
     }
 
     public void resetPlacing(){
-        place.setText("Derp");
+        place.setText("Place");
         placing = false;
         place.setChecked(false);
     }
@@ -173,6 +226,10 @@ public class StrategyComponent extends WidgetGroup {
     public Position getPosition(){
         Vector3 v = onMap.getPosition();
         return new Position(v.x, v.y);
+    }
+
+    public UIOrder getMapMarker(){
+        return onMap;
     }
 
     public synchronized LeaderCommunication getOrder(){
@@ -188,5 +245,17 @@ public class StrategyComponent extends WidgetGroup {
 
     public String getSaveString(){
         return ""+orderType.getSelectedIndex()+"/"+leaderSelection.getSelected().name+"/"+posX.getText()+"/"+posY.getText();
+    }
+
+    public String toString(){
+        return "" + number + ". " + orderType.getSelected().toString();
+        /*
+        if(order != null) {
+            return "" + number + ". " + order.toString();
+        }
+        else{
+            return "" + number + ". Undefined";
+        }
+        */
     }
 }

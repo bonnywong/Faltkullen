@@ -32,6 +32,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.Layout;
 import com.badlogic.gdx.utils.Scaling;
 import faltkullen.*;
 
+import javax.swing.*;
 import java.io.*;
 import java.util.ArrayList;
 
@@ -83,6 +84,8 @@ public class MyGdxGame extends ApplicationAdapter {
     private float topHeight = 65;
 
     private Table leftSideUI, topSideUI, bottomSideUI;
+
+    private JFileChooser fc;
 	
 	@Override
 	public void create () {
@@ -180,8 +183,20 @@ public class MyGdxGame extends ApplicationAdapter {
         float leftSideWidth = 150f;
         float topSideHeight = 35;
 
-        //Image panel = new Image(skin.newDrawable("white", Color.WHITE));
-        Image panel = new Image(skin.getDrawable("repeat"), Scaling.fillY);
+        Image panel = new Image(skin.newDrawable("white", Color.WHITE));
+        panel.setSize(leftSideWidth, Gdx.graphics.getHeight());
+        stage.addActor(panel);
+
+        panel = new Image(skin.newDrawable("white", Color.WHITE));
+        panel.setSize(width - leftSideWidth, topSideHeight);
+        panel.setPosition(leftSideWidth, height - topSideHeight);
+        stage.addActor(panel);
+
+        panel = new Image(skin.newDrawable("white", Color.WHITE));
+        panel.setSize(width - leftSideWidth, 200);
+        panel.setPosition(leftSideWidth, 0);
+        stage.addActor(panel);
+        /*Image panel = new Image(skin.getDrawable("repeat"), Scaling.fillY);
         Table regret = new Table();
         regret.setSize(leftSideWidth, Gdx.graphics.getHeight());
         regret.addActor(panel);
@@ -206,6 +221,7 @@ public class MyGdxGame extends ApplicationAdapter {
         regret.setClip(true);
         stage.addActor(regret);
         bottomSideUI = regret;
+        */
 
         panel = new Image(skin.newDrawable("white", Color.BLACK));
         panel.setSize(3, height - 200 - topSideHeight + 2);
@@ -378,6 +394,8 @@ public class MyGdxGame extends ApplicationAdapter {
         stage.addActor(selectedLabel);
 
         createArmyButtons();
+
+        fc = new JFileChooser();
 
         //testScroll();
     }
@@ -1031,26 +1049,31 @@ public class MyGdxGame extends ApplicationAdapter {
     }
 
     public void saveSetup(File f){
-        ArmyComposition[] armies = new ArmyComposition[]{redArmy, blueArmy};
+        int val = fc.showSaveDialog(null);
 
-        //We get the linebreak for whatever system we are currently on
-        String linebreak = System.getProperty("line.separator");
+        if(val == JFileChooser.APPROVE_OPTION){
+            File saveTo = fc.getSelectedFile();
+            ArmyComposition[] armies = new ArmyComposition[]{redArmy, blueArmy};
 
-        StringBuilder builder = new StringBuilder("");
+            //We get the linebreak for whatever system we are currently on
+            String linebreak = System.getProperty("line.separator");
 
-        //We iterate through each army
-        for(int a=0;a<armies.length;a++){
-            builder.append(armies[a].getSaveInfo(linebreak));
-        }
+            StringBuilder builder = new StringBuilder("");
 
-        try{
-            FileWriter outWriter = new FileWriter(f);
-            BufferedWriter buffWrite = new BufferedWriter(outWriter);
-            buffWrite.write(builder.toString());
-            buffWrite.close();
-        }
-        catch(IOException e){
-            System.out.println("Failed to Save File");
+            //We iterate through each army
+            for(int a=0;a<armies.length;a++){
+                builder.append(armies[a].getSaveInfo(linebreak));
+            }
+
+            try{
+                FileWriter outWriter = new FileWriter(saveTo);
+                BufferedWriter buffWrite = new BufferedWriter(outWriter);
+                buffWrite.write(builder.toString());
+                buffWrite.close();
+            }
+            catch(IOException e){
+                System.out.println("Failed to Save File");
+            }
         }
     }
 
@@ -1060,28 +1083,31 @@ public class MyGdxGame extends ApplicationAdapter {
     }
 
     public void loadSetup(File f){
-        placedGroups.clear();
+        int val = fc.showOpenDialog(null);
 
-        ArmyComposition[] armies = new ArmyComposition[]{redArmy, blueArmy};
-        try {
-            FileReader reader = new FileReader(f);
-            BufferedReader br = new BufferedReader(reader);
-            String currentLine = "";
-            String[] splitted;
-            int current = 0;
-            Sprite[] sprites = {redCircle, blueCircle};
-            while ((currentLine = br.readLine()) != null) {
-                if(currentLine.equals("NEWARMY")){
-                    loadArmy(new ArmyComposition(br, main, sprites[current], skin), current);
-                    current++;
+        if(val == JFileChooser.APPROVE_OPTION) {
+            File loadFrom = fc.getSelectedFile();
+            placedGroups.clear();
+
+            ArmyComposition[] armies = new ArmyComposition[]{redArmy, blueArmy};
+            try {
+                FileReader reader = new FileReader(loadFrom);
+                BufferedReader br = new BufferedReader(reader);
+                String currentLine = "";
+                String[] splitted;
+                int current = 0;
+                Sprite[] sprites = {redCircle, blueCircle};
+                while ((currentLine = br.readLine()) != null) {
+                    if (currentLine.equals("NEWARMY")) {
+                        loadArmy(new ArmyComposition(br, main, sprites[current], skin), current);
+                        current++;
+                    }
                 }
+            } catch (FileNotFoundException fnfe) {
+                System.out.println("File could not be found");
+            } catch (IOException e) {
+                System.out.println("Something went wrong (File found)");
             }
-        }
-        catch (FileNotFoundException fnfe){
-            System.out.println("File could not be found");
-        }
-        catch (IOException e) {
-            System.out.println("Something went wrong (File found)");
         }
     }
 

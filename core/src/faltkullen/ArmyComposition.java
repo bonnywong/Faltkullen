@@ -124,7 +124,7 @@ public class ArmyComposition {
                     groups.add(g);
                 }
                 else if(splitted[0].equals("O")){
-                    StrategyComponent sc = new StrategyComponent(splitted[1], sk, leaderList, orderTypes);
+                    StrategyComponent sc = new StrategyComponent(splitted[1], sk, leaderList, orderTypes, null);
                     orders.add(sc);
                 }
                 else if(splitted[0].equals("END_ARMY")){
